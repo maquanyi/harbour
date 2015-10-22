@@ -13,6 +13,28 @@ Harbour is a container node agent, which runs on the host machine, works as a pr
 Installation is simple as:
 
 	go get github.com/huawei-openlab/harbour
+	
+## Usage
+
+```
+$  ./harbour
+Usage: harbour [OPTIONS] [arg...]
+
+Options:
+
+  -D, --debug=false                          Enable debug mode
+  -d, --daemon=false                         Enable daemon mode
+  --docker-sock=/var/run/docker-real.sock    Path to docker sock file
+  -G, --group=docker                         Group for the unix socket
+  -H, --host=[]                              Daemon socket(s) to connect to
+  -h, --help=false                           Print usage
+  -v, --version=false                        Print version information and quit
+
+Commands:
+
+Run 'harbour COMMAND --help' for more information on a command.
+
+```
 
 ## Certificate of Origin
 By contributing to this project you agree to the Developer Certificate of
