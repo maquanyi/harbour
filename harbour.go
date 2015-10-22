@@ -6,8 +6,8 @@ import (
 	"os"
 	"os/exec"
 
-	"mflag"
-	"opts"
+	"github.com/huawei-openlab/harbour/mflag"
+	"github.com/huawei-openlab/harbour/opts"
 
 	"github.com/Sirupsen/logrus"
 )
