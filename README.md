@@ -40,9 +40,9 @@ Run 'harbour COMMAND --help' for more information on a command.
 
 ```
 ### Default mode
-Make sure docker located in PATH, run docker daemon, and do things as below:
+Make sure docker located in `PATH`, run docker daemon, and do the following work:
 - If binary used, run docker daemon with `-H unix:///var/run/docker-real.sock`
-- If ubuntu lxc-docker used, open `/etc/default/docker`, add `-H unix:///var/run/docker-real.sock` in `DOCKER_OPTS`, save and restart docker.
+- If ubuntu lxc-docker used, open file `/etc/default/docker`, add `-H unix:///var/run/docker-real.sock` in `DOCKER_OPTS`, save and restart docker.
 - If systemd used to manage docker service, open the service file corresponding to docker, add `-H unix:///var/run/docker-real.sock`, save and `systemctl restart docker`.
 
 Then run `harbour -d D` using root(Listen to `/var/run/docker.sock` and forward it to `/var/run/docker-real.sock` by default)
@@ -73,7 +73,7 @@ If any issues are encountered while using the harbour project, several avenues a
 
 
 ## Who should join
-- Container project developer/user
+- Container(docker,rkt,lxc) developer/user
 
 ## Certificate of Origin
 By contributing to this project you agree to the Developer Certificate of
