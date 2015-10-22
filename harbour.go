@@ -48,6 +48,9 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Please specify only one -H")
 		os.Exit(0)
 	}
+
+	// If no flag specified, print help info.
+	mflag.Usage()
 }
 
 func showVersion() {
