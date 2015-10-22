@@ -1,13 +1,12 @@
 package main
 
 import (
-	"api/server"
-	"engine"
-	"engine/trap"
-	"mflag"
-	"opts"
-
 	"github.com/Sirupsen/logrus"
+	"github.com/huawei-openlab/harbour/api/server"
+	"github.com/huawei-openlab/harbour/engine"
+	"github.com/huawei-openlab/harbour/engine/trap"
+	"github.com/huawei-openlab/harbour/mflag"
+	"github.com/huawei-openlab/harbour/opts"
 )
 
 func mainDaemon() {

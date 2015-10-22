@@ -17,8 +17,8 @@ import (
 	"strings"
 	"time"
 
-	"engine"
-	"engine/trap"
+	"github.com/huawei-openlab/harbour/engine"
+	"github.com/huawei-openlab/harbour/engine/trap"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/docker/pkg/ioutils"

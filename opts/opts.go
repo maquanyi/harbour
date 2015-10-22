@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"mflag"
+	"github.com/huawei-openlab/harbour/mflag"
 )
 
 const (

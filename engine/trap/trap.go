@@ -1,21 +1,21 @@
 package trap
 
 import (
-	"sync"
-	"sync/atomic"
 	"os"
 	"os/signal"
+	"sync"
+	"sync/atomic"
 	"syscall"
 	"time"
-	
+
 	"github.com/Sirupsen/logrus"
 )
 
 var (
-	lock                sync.RWMutex
-	shutdown            bool
-	shutdownWait        sync.WaitGroup
-	shutdownCallback    []func()
+	lock             sync.RWMutex
+	shutdown         bool
+	shutdownWait     sync.WaitGroup
+	shutdownCallback []func()
 	CleanupDone      = make(chan int, 1)
 )
 
@@ -50,8 +50,8 @@ func Shutdown() {
 		close(done)
 	}()
 	select {
-		case <-time.After(time.Second * 10):
-		case <-done:
+	case <-time.After(time.Second * 10):
+	case <-done:
 	}
 	return
 }

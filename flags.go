@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"mflag"
-	"opts"
+	"github.com/huawei-openlab/harbour/mflag"
+	"github.com/huawei-openlab/harbour/opts"
 )
 
 type command struct {
