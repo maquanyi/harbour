@@ -3,9 +3,6 @@
 ## What is Harbour
 Harbour is a container node agent, which runs on the host machine, works as a proxy for containers to eliminate the differences of containers. For examples, harbour takes over docker local monitor socket file and network monitor port to provides services for clients.
 
-## How it works
-
-
 ## Try it out
 
 ### Build
@@ -35,6 +32,16 @@ Commands:
 Run 'harbour COMMAND --help' for more information on a command.
 
 ```
+### Default
+Make sure docker located in PATH, run docker daemon, and do things as below:
+- If binary used, run docker daemon with -H unix:///var/run/docker-real.sock
+- If ubuntu lxc-docker used, open /etc/default/docker, add -H unix:///var/run/docker-real.sock in DOCKER_OPTS, save and restart docker.
+- If systemd used to manage docker service, open the service file corresponding to docker, add -H unix:///var/run/docker-real.sock, save and systemctl restart docker.
+
+Then run harbour -d D using root(Listen to /var/run/docker.sock and forward it to /var/run/docker-real.sock by default)
+
+### User-defined
+harbour -d -D --docker-sock=/var/run/dockerxxx.sock(specify sock for docker) -H unix:///a/b/c.sock(specify sock for harbour)  -H tcp://:4567(specify tcp port for harbour)
 
 ## Certificate of Origin
 By contributing to this project you agree to the Developer Certificate of
