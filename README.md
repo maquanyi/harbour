@@ -43,6 +43,31 @@ Then run `harbour -d D` using root(Listen to `/var/run/docker.sock` and forward 
 ### User-defined mode
 `harbour -d -D --docker-sock=/var/run/dockerxxx.sock`(specified sock for docker) `-H unix:///a/b/c.sock`(specified sock for harbour)  `-H tcp://:4567`(specified tcp port for harbour)
 
+### How to involve
+If any issues are encountered while using the harbour project, several avenues are available for support:
+<table>
+<tr>
+	<th align="left">
+	Issue Tracker
+	</th>
+	<td>
+	https://github.com/huawei-openlab/harbour/issues
+	</td>
+</tr>
+<tr>
+	<th align="left">
+	Google Groups
+	</th>
+	<td>
+	https://groups.google.com/forum/#!forum/harbour-dev
+	</td>
+</tr>
+</table>
+
+
+## Who should join
+- Container project developer/user
+- 
 ## Certificate of Origin
 By contributing to this project you agree to the Developer Certificate of
 Origin (DCO). This document was created by the Linux Kernel community and is a
