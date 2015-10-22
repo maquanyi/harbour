@@ -5,7 +5,14 @@ Harbour is a container node agent, which runs on the host machine, works as a pr
 
 ## How it works
 
+
 ## Try it out
+
+### Build
+
+Installation is simple as:
+
+	go get github.com/huawei-openlab/harbour
 
 ## Certificate of Origin
 By contributing to this project you agree to the Developer Certificate of
@@ -50,8 +57,6 @@ By making a contribution to this project, I certify that:
     maintained indefinitely and may be redistributed consistent with
     this project or the open source license(s) involved.
 ```
-
-## Contribution Flow
 
 ## Format of the Commit Message
 
