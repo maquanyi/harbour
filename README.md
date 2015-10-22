@@ -10,6 +10,13 @@ Harbour is a container node agent, which runs on the host machine, works as a pr
 Installation is simple as:
 
 	go get github.com/huawei-openlab/harbour
+
+or as involved as:
+
+	git clone https://github.com/huawei-openlab/harbour.git
+	cd harbour
+	go get -d ./...
+	go build
 	
 ## Usage
 
