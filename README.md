@@ -7,7 +7,8 @@ Harbour is a container node agent, which runs on the host machine, works as a pr
 As a proxy, harbour stands between user and container engine. When receives command from user, harbour identify and dispatch it to corresponding container engine in backend, such as docker or rkt.
 
 ## Current Status
-Until now, harbour can work as a proxy for docker daemon, support for rkt is already under way.
+Until now, harbour can work as a proxy for docker daemon, support for other containers(e.g. rkt) is already under way.
+It's a work in progress, so bear with us :)
 
 ## Try it out
 
