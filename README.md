@@ -1,4 +1,5 @@
 # Harbour: An agent for containers
+![Harbour](doc/pic/harbour.jpg "Harbour")
 
 ## What is Harbour
 Harbour is a container node agent, which runs on the host machine, works as a proxy for users to eliminate the differences between containers. For example, harbour takes over docker local socket and network port to provides services for clients.
