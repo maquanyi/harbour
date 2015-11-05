@@ -13,6 +13,7 @@ const (
 	DEFAULTUNIXSOCKET   = "/var/run/docker.sock"
 	DEFAULTDOCKERSOCKET = "/var/run/docker-real.sock"
 	DEFAULTRUNTIME      = "docker"
+	RKTRUNTIME          = "rkt"
 )
 
 type ListOpts struct {

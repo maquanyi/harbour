@@ -19,6 +19,7 @@ import (
 
 	"github.com/huawei-openlab/harbour/engine"
 	"github.com/huawei-openlab/harbour/engine/trap"
+	"github.com/huawei-openlab/harbour/opts"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/docker/pkg/ioutils"
@@ -273,8 +274,10 @@ func transForwarding(eng *engine.Engine, w http.ResponseWriter, r *http.Request,
 	logrus.Debugf("Request get: %v", r)
 	logrus.Debugf("Request's url: %v", r.URL.Path)
 
-	runRkt("docker://busybox")
-	return nil
+	if engine.ContainerRuntime == opts.RKTRUNTIME {
+		runRkt("docker://busybox")
+		return nil
+	}
 
 	// For docker exec, we have to check if the request body contains detach flag
 	// so that proper action mode can be chosen.
