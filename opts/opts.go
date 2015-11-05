@@ -12,6 +12,7 @@ const (
 	DEFAULTHTTPHOST     = "127.0.0.1"
 	DEFAULTUNIXSOCKET   = "/var/run/docker.sock"
 	DEFAULTDOCKERSOCKET = "/var/run/docker-real.sock"
+	DEFAULTRUNTIME      = "docker"
 )
 
 type ListOpts struct {

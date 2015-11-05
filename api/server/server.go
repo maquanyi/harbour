@@ -271,6 +271,10 @@ func closeStreams(streams ...interface{}) {
 func transForwarding(eng *engine.Engine, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
 	var requestBody []byte
 	logrus.Debugf("Request get: %v", r)
+	logrus.Debugf("Request's url: %v", r.URL.Path)
+
+	runRkt("docker://busybox")
+	return nil
 
 	// For docker exec, we have to check if the request body contains detach flag
 	// so that proper action mode can be chosen.
@@ -300,6 +304,7 @@ func transForwarding(eng *engine.Engine, w http.ResponseWriter, r *http.Request,
 		logrus.Errorf("UrlActionSelector error: %s", err)
 		return err
 	}
+
 	switch action {
 	case "stream":
 		{

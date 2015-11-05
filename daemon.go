@@ -21,6 +21,12 @@ func mainDaemon() {
 		engine.DockerSock = *flDockerSock
 	}
 
+	if len(*flRuntime) == 0 {
+		engine.ContainerRuntime = opts.DEFAULTRUNTIME
+	} else {
+		engine.ContainerRuntime = *flRuntime
+	}
+
 	if len(*flGroup) > 0 {
 		engine.SocketGroup = *flGroup
 	}

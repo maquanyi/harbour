@@ -17,6 +17,7 @@ var (
 	flVersion    = mflag.Bool([]string{"v", "-version"}, false, "Print version information and quit")
 	flDaemon     = mflag.Bool([]string{"d", "-daemon"}, false, "Enable daemon mode")
 	flDockerSock = mflag.String([]string{"-docker-sock"}, opts.DEFAULTDOCKERSOCKET, "Path to docker sock file")
+	flRuntime    = mflag.String([]string{"-container-runtime"}, opts.DEFAULTRUNTIME, "Container runtime to choose")
 	flDebug      = mflag.Bool([]string{"D", "-debug"}, false, "Enable debug mode")
 	flGroup      = mflag.String([]string{"G", "-group"}, "docker", "Group for the unix socket")
 	flHelp       = mflag.Bool([]string{"h", "-help"}, false, "Print usage")

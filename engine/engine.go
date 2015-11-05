@@ -4,8 +4,9 @@ type Engine struct {
 }
 
 var (
-	DockerSock  string
-	SocketGroup string
+	DockerSock       string
+	SocketGroup      string
+	ContainerRuntime string
 )
 
 func New() *Engine {
