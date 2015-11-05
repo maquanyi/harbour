@@ -29,6 +29,13 @@ func main() {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
 
+	if len(*flRuntime) != 0 {
+		if *flRuntime != opts.DEFAULTRUNTIME && *flRuntime != opts.RKTRUNTIME {
+			fmt.Println("Invalid container runtime")
+			return
+		}
+	}
+
 	if len(flHosts) == 0 {
 		defaultHost := fmt.Sprintf("unix://%s", opts.DEFAULTUNIXSOCKET)
 		flHosts = append(flHosts, defaultHost)
