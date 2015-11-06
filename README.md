@@ -5,13 +5,13 @@
 Harbour is a container node agent, which runs on the host machine, works as a proxy for users to eliminate the differences between containers. For example, harbour takes over docker local socket and network port to provides services for clients.
 
 ## How it works
-As a proxy, harbour stands between user and container engine. When receives command from user, harbour identify and dispatch it to corresponding container engine in backend, such as docker or rkt.
+Harbour is implemented as a configurable, pluggable HTTP proxy for the Docker API. As a proxy, harbour stands between user and container engine. When receives command from user, harbour identify and dispatch it to corresponding container engine in backend, such as docker or rkt. At present, you can use docker client as a user client to communicate with harbour, and in the long run, harbour client will be provided for the convenience of customers. 
 
 ## Current Status
-Until now, harbour can work as a proxy for docker daemon, support for other containers(e.g. rkt) is already under way.
-It's a work in progress, so bear with us :)
+At the time of writing, harbour can work as a proxy for docker daemon, support for other containers(e.g. rkt) is already under way. It's a work in progress, so bear with us :)
 
 ## Try it out
+Although harbour is still in development, we encourage you to try out the tool and give feedback. 
 
 ### Build
 
@@ -34,6 +34,7 @@ Usage: harbour [OPTIONS] [arg...]
 
 Options:
 
+  --container-runtime=docker                 Container runtime to choose
   -D, --debug=false                          Enable debug mode
   -d, --daemon=false                         Enable daemon mode
   --docker-sock=/var/run/docker-real.sock    Path to docker sock file
