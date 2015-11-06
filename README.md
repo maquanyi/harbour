@@ -83,6 +83,7 @@ If any issues are encountered while using the harbour project, several avenues a
 
 ## Who should join
 - Container(docker,rkt,lxc) developer/user
+- Ones who want to use container but do not care underlying runtime.
 
 ## Certificate of Origin
 By contributing to this project you agree to the Developer Certificate of
