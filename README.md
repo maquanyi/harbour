@@ -59,6 +59,45 @@ Then run `harbour -d D` using root(Listen to `/var/run/docker.sock` and forward 
 ### User-defined mode
 `harbour -d -D --docker-sock=/var/run/dockerxxx.sock`(specified sock for docker) `-H unix:///a/b/c.sock`(specified sock for harbour)  `-H tcp://:4567`(specified tcp port for harbour)
 
+### Examples
+Below is an example of harbour working for docker in default mode:
+- Run harbour daemon
+```
+$ ./harbour -d -D &
+[1] 15127
+root@ubuntu:~/Applications/Go/src/github.com/huawei-openlab/harbour# DEBU[0000] trap init...
+DEBU[0000] Registering GET,
+DEBU[0000] Registering POST,
+DEBU[0000] Registering DELETE,
+DEBU[0000] Listening for HTTP on unix (/var/run/docker.sock)
+DEBU[0000] docker group found. gid: 999
+```
+- Run docker daemon with parameters
+```
+$ docker -d -H unix:///var/run/docker-real.sock &
+[2] 15131
+
+INFO[0000] Listening for HTTP on unix (/var/run/docker-real.sock)
+INFO[0000] [graphdriver] using prior storage driver "aufs"
+INFO[0000] Loading containers: start.
+....................
+INFO[0000] Loading containers: done.
+INFO[0000] Daemon has completed initialization
+INFO[0000] Docker daemon                                 commit=786b29d execdriver=native-0.2 graphdriver=aufs version=1.7.1
+```
+- Run docker client
+```
+$ docker images
+DEBU[0512] Calling GET
+DEBU[0512] Request get: &{GET /v1.19/images/json HTTP/1.1 1 1 map[User-Agent:[Docker-Client/1.7.1]] 0x8f5e30 0 [] false /var/run/docker.sock map[] map[] <nil> map[] @ /v1.19/images/json <nil>}
+DEBU[0512] Request's url: /v1.19/images/json
+INFO[0292] GET /v1.19/images/json
+REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+busybox             latest              17583c7dd0da        8 days ago          1.109 MB
+ubuntu              latest              a5a467fddcb8        2 weeks ago         187.9 MB
+<none>              <none>              8c2e06607696        6 months ago        2.433 MB
+```
+
 ## How to involve
 If any issues are encountered while using the harbour project, several avenues are available for support:
 <table>
