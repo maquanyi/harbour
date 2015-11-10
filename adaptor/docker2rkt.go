@@ -1,6 +1,6 @@
 // Operations to convert docker client cmd to rkt cmd.
 
-package server
+package adaptor
 
 import (
 	"fmt"

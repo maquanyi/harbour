@@ -17,6 +17,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/huawei-openlab/harbour/adaptor"
 	"github.com/huawei-openlab/harbour/engine"
 	"github.com/huawei-openlab/harbour/engine/trap"
 	"github.com/huawei-openlab/harbour/opts"
@@ -27,11 +28,6 @@ import (
 
 	"github.com/opencontainers/runc/libcontainer/user"
 )
-
-type UserConfig struct {
-	Hostname string // Hostname
-	Image    string // Name of the image as it was passed by the operator (eg. could be symbolic)
-}
 
 type Server struct {
 	router *mux.Router
@@ -276,27 +272,13 @@ func closeStreams(streams ...interface{}) {
 
 func transForwarding(eng *engine.Engine, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
 	var requestBody []byte
-	var config UserConfig
 
 	logrus.Debugf("Request get: %v", r)
 	logrus.Debugf("Request's url :%v", r.URL)
 	logrus.Debugf("Request's url path: %v", r.URL.Path)
 
 	if engine.ContainerRuntime == opts.RKTRUNTIME {
-		createMatch, err := regexp.MatchString("/create", r.URL.Path)
-		if createMatch {
-			requestBody, err = ioutil.ReadAll(r.Body)
-			if err != nil {
-				logrus.Errorf("Read request body error: %s", err)
-				return err
-			}
-			logrus.Debugf("Transforwarding request body: %s", strings.TrimRight(string(requestBody), "\n"))
-			s := strings.TrimRight(string(requestBody), "\n")
-			json.Unmarshal([]byte(s), &config)
-		}
-
-		s := "docker://" + config.Image
-		runRkt(s)
+		adaptor.ParseUserConfig(r)
 		return nil
 	}
 
