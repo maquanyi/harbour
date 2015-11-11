@@ -278,8 +278,7 @@ func transForwarding(eng *engine.Engine, w http.ResponseWriter, r *http.Request,
 	logrus.Debugf("Request's url path: %v", r.URL.Path)
 
 	if engine.ContainerRuntime == opts.RKTRUNTIME {
-		adaptor.ParseUserConfig(r)
-		return nil
+		return adaptor.Rkt_Rundockercmd(r)
 	}
 
 	// For docker exec, we have to check if the request body contains detach flag

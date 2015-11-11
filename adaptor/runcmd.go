@@ -23,11 +23,6 @@ func (e *Err) Error() string {
 	return fmt.Sprintf("[%v:%v] %v", e.File, e.Line, e.Message)
 }
 
-func runRkt(urlPath string) error {
-	err := run(exec.Command("rkt", "--insecure-skip-verify", "--interactive", "--mds-register=false", "run", urlPath))
-	return err
-}
-
 func run(cmd *exec.Cmd) error {
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
