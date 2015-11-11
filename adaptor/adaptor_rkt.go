@@ -23,9 +23,14 @@ func Rkt_Rundockercmd(r *http.Request) error {
 		return rktCmdRun(r)
 	}
 
-	jsonMatch, _ := regexp.MatchString("/json", r.URL.Path)
-	if jsonMatch {
+	listMatch, _ := regexp.MatchString("/containers/json", r.URL.Path)
+	if listMatch {
 		return rktCmdList(r)
+	}
+
+	imageMatch, _ := regexp.MatchString("/images/json", r.URL.Path)
+	if imageMatch {
+		return rktCmdImage(r)
 	}
 
 	versionMatch, _ := regexp.MatchString("/version", r.URL.Path)
@@ -70,6 +75,25 @@ func rktCmdList(r *http.Request) error {
 	cmdStr = "list"
 
 	err = run(exec.Command("rkt", cmdStr))
+
+	return err
+}
+
+func rktCmdImage(r *http.Request) error {
+	var cmdStr string
+
+	requestBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logrus.Errorf("Read request body error: %s", err)
+		return err
+	}
+
+	cmdStr = strings.TrimRight(string(requestBody), "\n")
+	logrus.Debugf("Transforwarding request body: %s", cmdStr)
+
+	cmdStr = "list"
+
+	err = run(exec.Command("rkt", "image", cmdStr))
 
 	return err
 }
