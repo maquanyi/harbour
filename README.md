@@ -60,7 +60,9 @@ Then run `harbour -d D` using root(Listen to `/var/run/docker.sock` and forward 
 `harbour -d -D --docker-sock=/var/run/dockerxxx.sock`(specified sock for docker) `-H unix:///a/b/c.sock`(specified sock for harbour)  `-H tcp://:4567`(specified tcp port for harbour)
 
 ### Examples
-Below is an example of harbour working for docker in default mode:
+
+#### Proxy for Docker
+Harbour works as a proxy of docker by default. Below is an example of harbour working for docker in default mode:
 - Run harbour daemon
 ```
 $ ./harbour -d -D &
@@ -96,6 +98,43 @@ REPOSITORY          TAG                 IMAGE ID            CREATED             
 busybox             latest              17583c7dd0da        8 days ago          1.109 MB
 ubuntu              latest              a5a467fddcb8        2 weeks ago         187.9 MB
 <none>              <none>              8c2e06607696        6 months ago        2.433 MB
+```
+
+#### Proxy for rkt
+If you want harbour to work as a proxy for rkt, `--container-runtime=rkt` option can be added when harbour daemon started. Example illustrated as below:
+
+- Run harbour daemon with rkt parameter
+
+```
+$ ./harbour --container-runtime=rkt -d -D &
+[3] 25594
+root@ubuntu:~/Applications/Go/src/github.com/huawei-openlab/harbour# DEBU[0000] trap init...
+DEBU[0000] Registering POST,
+DEBU[0000] Registering DELETE,
+DEBU[0000] Registering GET,
+DEBU[0000] Listening for HTTP on unix (/var/run/docker.sock)
+DEBU[0000] docker group found. gid: 999
+
+```
+
+- Docker cmd will be converted to rkt operations
+
+```
+$ docker images
+DEBU[0222] Calling GET
+DEBU[0222] Request get: &{GET /v1.19/images/json HTTP/1.1 1 1 map[User-Agent:[Docker-Client/1.7.1]] 0x8f7e30 0 [] false /var/run/docker.sock map[] map[] <nil> map[] @ /v1.19/images/json <nil>}
+DEBU[0222] Request's url :/v1.19/images/json
+DEBU[0222] Request's url path: /v1.19/images/json
+DEBU[0222] Transforwarding request body:
+KEY                                                                     APPNAME                         IMPORTTIME                              LATEST
+sha512-ca0bee4ecb888d10cf0816ebe7e16499230ab349bd3126976ab60b9b1db2e120 coreos.com/rkt/stage1:0.8.0     2015-09-15 17:38:15.068 +0800 CST       false
+sha512-b56f0c5d3808771c5571c1d98629eab0ec02dfe71910ff57c13a32a1497f1add example:0.0.1                   2015-09-15 17:39:17.747 +0800 CST       false
+sha512-f7120d3a61fd72c746b3550a4d2ae55f0119c8086d5f1e6afe8310fe2cc4f4aa example:0.0.1                   2015-09-15 17:50:08.142 +0800 CST       false
+sha512-6f7cd1c85308e01c3e9e628804c6c01510c3f4895ff1674d9ece91d4bf87874d example:0.0.1                   2015-09-15 17:58:31.36 +0800 CST        false
+sha512-077395c1a7acf9543f202f1182540bad42d452127d0f57baae30a3e3e8b2f5cb example:0.0.1                   2015-09-15 19:24:08.305 +0800 CST       false
+sha512-13885d66415514cdf908a033a7d2025c9cdf5fed2336fa7ea2e8821e440de9cb example:0.0.1                   2015-09-16 14:29:25.522 +0800 CST       false
+sha512-e3369b474208cd5d8aa40d04a6c609d5feace3c56501cbabed2b847db93941ef example:0.0.1                   2015-09-16 14:38:35.04 +0800 CST        false
+
 ```
 
 ## How to involve
