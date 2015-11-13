@@ -105,10 +105,11 @@ If you want harbour to work as a proxy for rkt, `--container-runtime=rkt` option
 
 - Run harbour daemon with rkt parameter
 
+Harbour will be working in rkt proxy mode:
 ```
 $ ./harbour --container-runtime=rkt -d -D &
 [3] 25594
-root@ubuntu:~/Applications/Go/src/github.com/huawei-openlab/harbour# DEBU[0000] trap init...
+DEBU[0000] trap init...
 DEBU[0000] Registering POST,
 DEBU[0000] Registering DELETE,
 DEBU[0000] Registering GET,
@@ -117,9 +118,28 @@ DEBU[0000] docker group found. gid: 999
 
 ```
 
-- Docker cmd will be converted to rkt operations
+- Handle user requests by using Docker cmd
 
+Docker cmd will be converted to rkt operations:
 ```
+$ docker run busybox
+DEBU[1397] Calling POST
+DEBU[1397] Request get: &{POST /v1.19/containers/create HTTP/1.1 1 1 map[User-Agent:[Docker-Client/1.7.1] Content-Length:[961] Content-Type:[application/json]] 0xc20800a1c0 961 [] false /var/run/docker.sock map[] map[] <nil> map[] @ /v1.19/containers/create <nil>}
+DEBU[1397] Request's url :/v1.19/containers/create
+DEBU[1397] Request's url path: /v1.19/containers/create
+DEBU[1397] Transforwarding request body: {"Hostname":"","Domainname":"","User":"","AttachStdin":false,"AttachStdout":true,"AttachStderr":true,"PortSpecs":null,"ExposedPorts":{},"Tty":false,"OpenStdin":false,"StdinOnce":false,"Env":[],"Cmd":null,"Image":"busybox","Volumes":{},"VolumeDriver":"","WorkingDir":"","Entrypoint":null,"NetworkDisabled":false,"MacAddress":"","OnBuild":null,"Labels":{},"HostConfig":{"Binds":null,"ContainerIDFile":"","LxcConf":[],"Memory":0,"MemorySwap":0,"CpuShares":0,"CpuPeriod":0,"CpusetCpus":"","CpusetMems":"","CpuQuota":0,"BlkioWeight":0,"OomKillDisable":false,"Privileged":false,"PortBindings":{},"Links":null,"PublishAllPorts":false,"Dns":null,"DnsSearch":null,"ExtraHosts":null,"VolumesFrom":null,"Devices":[],"NetworkMode":"bridge","IpcMode":"","PidMode":"","UTSMode":"","CapAdd":null,"CapDrop":null,"RestartPolicy":{"Name":"no","MaximumRetryCount":0},"SecurityOpt":null,"ReadonlyRootfs":false,"Ulimits":null,"LogConfig":{"Type":"","Config":{}},"CgroupParent":""}}
+Downloading d1592a710ac3: [====================================] 674 KB/674 KB
+Downloading 17583c7dd0da: [====================================] 32 B/32 B
+2015/11/13 11:43:16 Preparing stage1
+2015/11/13 11:43:16 Writing image manifest
+2015/11/13 11:43:16 Loading image sha512-cf74c26d8d35555066dce70bd94f513b90cbef6e7e9c01ea0c971f4f6d689848
+2015/11/13 11:43:16 Writing pod manifest
+2015/11/13 11:43:16 Setting up stage1
+2015/11/13 11:43:16 Wrote filesystem to /var/lib/rkt/pods/run/a49cd96c-56b2-4e18-9a0c-af2ed272729a
+2015/11/13 11:43:16 Pivoting to filesystem /var/lib/rkt/pods/run/a49cd96c-56b2-4e18-9a0c-af2ed272729a
+2015/11/13 11:43:16 Execing /init
+/ #
+
 $ docker images
 DEBU[0222] Calling GET
 DEBU[0222] Request get: &{GET /v1.19/images/json HTTP/1.1 1 1 map[User-Agent:[Docker-Client/1.7.1]] 0x8f7e30 0 [] false /var/run/docker.sock map[] map[] <nil> map[] @ /v1.19/images/json <nil>}
