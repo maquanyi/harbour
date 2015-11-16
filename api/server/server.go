@@ -88,17 +88,62 @@ func makeHttpHandler(eng *engine.Engine, localMethod string, localRoute string, 
 	}
 }
 
+func getHandlerProc(eng *engine.Engine, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+	var err error
+	logrus.Debugf("Request get: %v", r)
+	logrus.Debugf("Request's url: %v", r.URL)
+	logrus.Debugf("Request's url path: %v", r.URL.Path)
+
+	if engine.ContainerRuntime == opts.RKTRUNTIME {
+		err = adaptor.Rkt_Rundockercmd(r, adaptor.GET)
+	} else {
+		err = transForwarding(eng, w, r, vars)
+	}
+
+	return err
+}
+
+func postHandlerProc(eng *engine.Engine, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+	var err error
+	logrus.Debugf("Request get: %v", r)
+	logrus.Debugf("Request's url: %v", r.URL)
+	logrus.Debugf("Request's url path: %v", r.URL.Path)
+
+	if engine.ContainerRuntime == opts.RKTRUNTIME {
+		err = adaptor.Rkt_Rundockercmd(r, adaptor.POST)
+	} else {
+		err = transForwarding(eng, w, r, vars)
+	}
+
+	return err
+}
+
+func deleteHandlerProc(eng *engine.Engine, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+	var err error
+	logrus.Debugf("Request get: %v", r)
+	logrus.Debugf("Request's url: %v", r.URL)
+	logrus.Debugf("Request's url path: %v", r.URL.Path)
+
+	if engine.ContainerRuntime == opts.RKTRUNTIME {
+		err = adaptor.Rkt_Rundockercmd(r, adaptor.DELETE)
+	} else {
+		err = transForwarding(eng, w, r, vars)
+	}
+
+	return err
+
+}
 func createRouter(eng *engine.Engine, srv *Server, kube bool) *mux.Router {
 	r := mux.NewRouter()
 	m := map[string]map[string]HttpApiFunc{
 		"GET": {
-			"": transForwarding,
+			"": getHandlerProc,
 		},
 		"POST": {
-			"": transForwarding,
+			"": postHandlerProc,
 		},
 		"DELETE": {
-			"": transForwarding,
+			"": deleteHandlerProc,
 		},
 	}
 
@@ -272,14 +317,6 @@ func closeStreams(streams ...interface{}) {
 
 func transForwarding(eng *engine.Engine, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
 	var requestBody []byte
-
-	logrus.Debugf("Request get: %v", r)
-	logrus.Debugf("Request's url :%v", r.URL)
-	logrus.Debugf("Request's url path: %v", r.URL.Path)
-
-	if engine.ContainerRuntime == opts.RKTRUNTIME {
-		return adaptor.Rkt_Rundockercmd(r)
-	}
 
 	// For docker exec, we have to check if the request body contains detach flag
 	// so that proper action mode can be chosen.

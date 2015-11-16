@@ -11,12 +11,22 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
+const (
+	GET = iota
+	POST
+	DELETE
+)
+
 type UserConfig struct {
 	Hostname string // Hostname
 	Image    string // Name of the image as it was passed by the operator (eg. could be symbolic)
 }
 
-func Rkt_Rundockercmd(r *http.Request) error {
+func Rkt_Rundockercmd(r *http.Request, method int) error {
+
+	if method == DELETE {
+		return rktCmdRm(r)
+	}
 
 	createMatch, _ := regexp.MatchString("/create", r.URL.Path)
 	if createMatch {
@@ -111,6 +121,25 @@ func rktCmdVersion(r *http.Request) error {
 	logrus.Debugf("Transforwarding request body: %s", cmdStr)
 
 	cmdStr = "version"
+
+	err = run(exec.Command("rkt", cmdStr))
+
+	return err
+}
+
+func rktCmdRm(r *http.Request) error {
+	var cmdStr string
+
+	requestBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logrus.Errorf("Read request body error: %s", err)
+		return err
+	}
+
+	cmdStr = strings.TrimRight(string(requestBody), "\n")
+	logrus.Debugf("Transforwarding request body: %s", cmdStr)
+
+	cmdStr = "gc"
 
 	err = run(exec.Command("rkt", cmdStr))
 
