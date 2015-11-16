@@ -1,0 +1,29 @@
+{
+	"ImportPath": "github.com/huawei-openlab/harbour",
+	"GoVersion": "go1.4.2",
+	"Deps": [
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "v0.8.7",
+			"Rev": "418b41d23a1bf978c06faea5313ba194650ac088"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/pkg/ioutils",
+			"Comment": "v1.4.1-7109-gc6ec33e",
+			"Rev": "c6ec33ea8f8a2691c9a43f02cc69fcd204e04b18"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "1c83b3eabd45b6d76072b66b746c20815fb2872d"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "ad4d7a5882b961e07e2626045eb995c022ac6664"
+		},
+		{
+			"ImportPath": "github.com/opencontainers/runc/libcontainer/user",
+			"Comment": "v0.0.4-172-g48fdc50",
+			"Rev": "48fdc50d09546ed8773f61ba408faad499f942a0"
+		}
+	]
+}

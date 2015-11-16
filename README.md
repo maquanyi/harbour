@@ -17,14 +17,19 @@ Although harbour is still in development, we encourage you to try out the tool a
 
 Installation is simple as:
 
-	go get github.com/huawei-openlab/harbour
+```bash
+go get github.com/huawei-openlab/harbour
+```
 
 or as involved as:
 
-	git clone https://github.com/huawei-openlab/harbour.git
-	cd harbour
-	go get -d ./...
-	go build
+```bash
+# create a 'github.com/huawei-openlab' directory in your GOPATH/src
+git clone https://github.com/huawei-openlab/harbour.git
+cd harbour
+make
+sudo make install
+```
 	
 ## Usage
 
