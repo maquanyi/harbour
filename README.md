@@ -25,7 +25,8 @@ or as involved as:
 
 ```bash
 # create a 'github.com/huawei-openlab' directory in your GOPATH/src
-git clone https://github.com/huawei-openlab/harbour.git
+cd github.com/huawei-openlab
+git clone https://github.com/huawei-openlab/harbour
 cd harbour
 make
 sudo make install
