@@ -20,7 +20,6 @@ import (
 	"github.com/huawei-openlab/harbour/adaptor"
 	"github.com/huawei-openlab/harbour/engine"
 	"github.com/huawei-openlab/harbour/engine/trap"
-	"github.com/huawei-openlab/harbour/opts"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/docker/pkg/ioutils"
@@ -94,11 +93,7 @@ func getHandlerProc(eng *engine.Engine, w http.ResponseWriter, r *http.Request, 
 	logrus.Debugf("Request's url: %v", r.URL)
 	logrus.Debugf("Request's url path: %v", r.URL.Path)
 
-	if engine.ContainerRuntime == opts.RKTRUNTIME {
-		err = adaptor.Rkt_Rundockercmd(r, adaptor.GET)
-	} else {
-		err = transForwarding(eng, w, r, vars)
-	}
+	err = adaptor.Rkt_Rundockercmd(r, adaptor.GET)
 
 	return err
 }
@@ -109,11 +104,7 @@ func postHandlerProc(eng *engine.Engine, w http.ResponseWriter, r *http.Request,
 	logrus.Debugf("Request's url: %v", r.URL)
 	logrus.Debugf("Request's url path: %v", r.URL.Path)
 
-	if engine.ContainerRuntime == opts.RKTRUNTIME {
-		err = adaptor.Rkt_Rundockercmd(r, adaptor.POST)
-	} else {
-		err = transForwarding(eng, w, r, vars)
-	}
+	err = adaptor.Rkt_Rundockercmd(r, adaptor.POST)
 
 	return err
 }
@@ -124,16 +115,55 @@ func deleteHandlerProc(eng *engine.Engine, w http.ResponseWriter, r *http.Reques
 	logrus.Debugf("Request's url: %v", r.URL)
 	logrus.Debugf("Request's url path: %v", r.URL.Path)
 
-	if engine.ContainerRuntime == opts.RKTRUNTIME {
-		err = adaptor.Rkt_Rundockercmd(r, adaptor.DELETE)
-	} else {
-		err = transForwarding(eng, w, r, vars)
-	}
+	err = adaptor.Rkt_Rundockercmd(r, adaptor.DELETE)
 
 	return err
 
 }
-func createRouter(eng *engine.Engine, srv *Server, kube bool) *mux.Router {
+func createRouterDocker(eng *engine.Engine, srv *Server, kube bool) *mux.Router {
+	r := mux.NewRouter()
+	m := map[string]map[string]HttpApiFunc{
+		"GET": {
+			"": transForwarding,
+		},
+		"POST": {
+			"": transForwarding,
+		},
+		"DELETE": {
+			"": transForwarding,
+		},
+	}
+
+	for method, routes := range m {
+		keys := []string{}
+		for route, _ := range routes {
+			keys = append(keys, route)
+		}
+		sort.Sort(sort.Reverse(sort.StringSlice(keys)))
+		for _, route := range keys {
+			fct := routes[route]
+			logrus.Debugf("Registering %s, %s for docker", method, route)
+			// NOTE: scope issue, make sure the variables are local and won't be changed
+			localRoute := route
+			localFct := fct
+			localMethod := method
+
+			// build the handler function
+			f := makeHttpHandler(eng, localMethod, localRoute, localFct)
+
+			// add the new route
+			if localRoute == "" {
+				r.Methods(localMethod).HandlerFunc(f)
+			} else {
+				r.Path(localRoute).Methods(localMethod).HandlerFunc(f)
+			}
+		}
+	}
+
+	return r
+}
+
+func createRouterRkt(eng *engine.Engine, srv *Server, kube bool) *mux.Router {
 	r := mux.NewRouter()
 	m := map[string]map[string]HttpApiFunc{
 		"GET": {
@@ -155,7 +185,7 @@ func createRouter(eng *engine.Engine, srv *Server, kube bool) *mux.Router {
 		sort.Sort(sort.Reverse(sort.StringSlice(keys)))
 		for _, route := range keys {
 			fct := routes[route]
-			logrus.Debugf("Registering %s, %s", method, route)
+			logrus.Debugf("Registering %s, %s for rkt", method, route)
 			// NOTE: scope issue, make sure the variables are local and won't be changed
 			localRoute := route
 			localFct := fct
@@ -177,9 +207,16 @@ func createRouter(eng *engine.Engine, srv *Server, kube bool) *mux.Router {
 }
 
 func New(eng *engine.Engine, kube bool) *Server {
+	var r *mux.Router
+
 	srv := &Server{}
-	r := createRouter(eng, srv, kube)
+	if eng.RuntimeType == engine.RuntimeRkt {
+		r = createRouterRkt(eng, srv, kube)
+	} else {
+		r = createRouterDocker(eng, srv, kube)
+	}
 	srv.router = r
+
 	return srv
 }
 
@@ -317,6 +354,11 @@ func closeStreams(streams ...interface{}) {
 
 func transForwarding(eng *engine.Engine, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
 	var requestBody []byte
+	var err error
+
+	logrus.Debugf("Request get: %v", r)
+	logrus.Debugf("Request's url: %v", r.URL)
+	logrus.Debugf("Request's url path: %v", r.URL.Path)
 
 	// For docker exec, we have to check if the request body contains detach flag
 	// so that proper action mode can be chosen.

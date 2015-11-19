@@ -21,17 +21,16 @@ func mainDaemon() {
 		engine.DockerSock = *flDockerSock
 	}
 
-	if len(*flRuntime) == 0 {
-		engine.ContainerRuntime = opts.DEFAULTRUNTIME
-	} else {
-		engine.ContainerRuntime = *flRuntime
+	RuntimeType := engine.RuntimeDocker
+	if len(*flRuntime) != 0 && *flRuntime == opts.RKTRUNTIME {
+		RuntimeType = engine.RuntimeRkt
 	}
 
 	if len(*flGroup) > 0 {
 		engine.SocketGroup = *flGroup
 	}
 
-	eng := engine.New()
+	eng := engine.New(RuntimeType)
 
 	//catch signals
 	trap.SignalsHandler(trap.Shutdown)

@@ -1,15 +1,22 @@
 package engine
 
 type Engine struct {
+	RuntimeType int
 }
 
 var (
-	DockerSock       string
-	SocketGroup      string
-	ContainerRuntime string
+	DockerSock  string
+	SocketGroup string
 )
 
-func New() *Engine {
+const (
+	RuntimeDocker = iota
+	RuntimeRkt
+)
+
+func New(RuntimeType int) *Engine {
 	eng := &Engine{}
+	eng.RuntimeType = RuntimeType
+
 	return eng
 }
