@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/huawei-openlab/harbour/utils"
 )
 
 const (
@@ -65,7 +66,7 @@ func rktCmdRun(r *http.Request) error {
 	json.Unmarshal([]byte(cmdStr), &config)
 	cmdStr = "docker://" + config.Image
 
-	err = run(exec.Command("rkt", "--insecure-skip-verify", "--interactive", "--mds-register=false", "run", cmdStr))
+	err = utils.Run(exec.Command("rkt", "--insecure-skip-verify", "--interactive", "--mds-register=false", "run", cmdStr))
 
 	return err
 }
@@ -84,7 +85,7 @@ func rktCmdList(r *http.Request) error {
 
 	cmdStr = "list"
 
-	err = run(exec.Command("rkt", cmdStr))
+	err = utils.Run(exec.Command("rkt", cmdStr))
 
 	return err
 }
@@ -103,7 +104,7 @@ func rktCmdImage(r *http.Request) error {
 
 	cmdStr = "list"
 
-	err = run(exec.Command("rkt", "image", cmdStr))
+	err = utils.Run(exec.Command("rkt", "image", cmdStr))
 
 	return err
 }
@@ -122,7 +123,7 @@ func rktCmdVersion(r *http.Request) error {
 
 	cmdStr = "version"
 
-	err = run(exec.Command("rkt", cmdStr))
+	err = utils.Run(exec.Command("rkt", cmdStr))
 
 	return err
 }
@@ -141,7 +142,7 @@ func rktCmdRm(r *http.Request) error {
 
 	cmdStr = "gc"
 
-	err = run(exec.Command("rkt", cmdStr))
+	err = utils.Run(exec.Command("rkt", cmdStr))
 
 	return err
 }

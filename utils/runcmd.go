@@ -1,6 +1,6 @@
 // Operations to convert docker client cmd to rkt cmd.
 
-package adaptor
+package utils
 
 import (
 	"fmt"
@@ -23,7 +23,7 @@ func (e *Err) Error() string {
 	return fmt.Sprintf("[%v:%v] %v", e.File, e.Line, e.Message)
 }
 
-func run(cmd *exec.Cmd) error {
+func Run(cmd *exec.Cmd) error {
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return errorf(err.Error())
