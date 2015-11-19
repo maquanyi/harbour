@@ -360,14 +360,6 @@ func transForwarding(eng *engine.Engine, w http.ResponseWriter, r *http.Request,
 	logrus.Debugf("Request's url: %v", r.URL)
 	logrus.Debugf("Request's url path: %v", r.URL.Path)
 
-	requestBody, err = ioutil.ReadAll(r.Body)
-	if err != nil {
-		logrus.Errorf("Read request body error: %s", err)
-		return err
-	}
-	cmdStr := strings.TrimRight(string(requestBody), "\n")
-	logrus.Debugf("Transforwarding request body: %s", cmdStr)
-
 	// For docker exec, we have to check if the request body contains detach flag
 	// so that proper action mode can be chosen.
 	execMatch, err := regexp.MatchString(".*/exec/.*/start", r.URL.Path)
