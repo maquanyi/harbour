@@ -29,7 +29,7 @@ func Rkt_Rundockercmd(r *http.Request, method int) error {
 		return rktCmdRm(r)
 	}
 
-	createMatch, _ := regexp.MatchString("/create", r.URL.Path)
+	createMatch, _ := regexp.MatchString("/containers/create", r.URL.Path)
 	if createMatch {
 		return rktCmdRun(r)
 	}
@@ -61,12 +61,14 @@ func rktCmdRun(r *http.Request) error {
 		logrus.Errorf("Read request body error: %s", err)
 		return err
 	}
+
 	cmdStr = strings.TrimRight(string(requestBody), "\n")
 	logrus.Debugf("Transforwarding request body: %s", cmdStr)
 	json.Unmarshal([]byte(cmdStr), &config)
-	cmdStr = "docker://" + config.Image
+	cmdStr = "rkt " + "--interactive " + "--insecure-skip-verify " + "--mds-register=false " + "run "
+	cmdStr += "docker://" + config.Image
 
-	err = utils.Run(exec.Command("rkt", "--insecure-skip-verify", "--interactive", "--mds-register=false", "run", cmdStr))
+	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
 	return err
 }
