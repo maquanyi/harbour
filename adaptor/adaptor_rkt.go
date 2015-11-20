@@ -56,6 +56,11 @@ func Rkt_Rundockercmd(r *http.Request, method int) error {
 		return rktCmdVersion(r)
 	}
 
+	statsMatch, _ := regexp.MatchString("/stats", r.URL.Path)
+	if statsMatch {
+		return rktCmdStats(r)
+	}
+
 	return nil
 }
 
@@ -185,6 +190,36 @@ func rktCmdRmi(r *http.Request) error {
 	}
 
 	cmdStr = "rkt image rm " + imgID[1]
+
+	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
+
+	return err
+}
+
+func rktCmdStats(r *http.Request) error {
+	var cmdStr string
+	var rktID []string
+
+	requestBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logrus.Errorf("Read request body error: %s", err)
+		return err
+	}
+
+	cmdStr = strings.TrimRight(string(requestBody), "\n")
+	logrus.Debugf("Transforwarding request body: %s", cmdStr)
+
+	rktID = strings.SplitAfter(r.URL.Path, "containers/")
+	if len(rktID) < 2 {
+		return nil
+	}
+
+	rktID = strings.Split(rktID[1], "/stats")
+	if len(rktID) < 1 {
+		return nil
+	}
+
+	cmdStr = "rkt status " + rktID[0]
 
 	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
