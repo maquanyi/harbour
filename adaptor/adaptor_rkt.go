@@ -26,7 +26,14 @@ type UserConfig struct {
 func Rkt_Rundockercmd(r *http.Request, method int) error {
 
 	if method == DELETE {
-		return rktCmdRm(r)
+		rmMatch, _ := regexp.MatchString("/containers/", r.URL.Path)
+		if rmMatch {
+			return rktCmdRm(r)
+		}
+		rmiMatch, _ := regexp.MatchString("/images/", r.URL.Path)
+		if rmiMatch {
+			return rktCmdRmi(r)
+		}
 	}
 
 	createMatch, _ := regexp.MatchString("/containers/create", r.URL.Path)
@@ -132,6 +139,7 @@ func rktCmdVersion(r *http.Request) error {
 
 func rktCmdRm(r *http.Request) error {
 	var cmdStr string
+	var rktID []string
 
 	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -142,9 +150,43 @@ func rktCmdRm(r *http.Request) error {
 	cmdStr = strings.TrimRight(string(requestBody), "\n")
 	logrus.Debugf("Transforwarding request body: %s", cmdStr)
 
-	cmdStr = "gc"
+	rktID = strings.SplitAfter(r.URL.Path, "containers/")
+	if len(rktID) < 2 {
+		return nil
+	}
 
-	err = utils.Run(exec.Command("rkt", cmdStr))
+	if rktID[1] == "all" {
+		cmdStr = "rkt gc"
+	} else {
+		cmdStr = "rkt rm --insecure-skip-verify " + rktID[1]
+	}
+
+	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
+
+	return err
+}
+
+func rktCmdRmi(r *http.Request) error {
+	var cmdStr string
+	var imgID []string
+
+	requestBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logrus.Errorf("Read request body error: %s", err)
+		return err
+	}
+
+	cmdStr = strings.TrimRight(string(requestBody), "\n")
+	logrus.Debugf("Transforwarding request body: %s", cmdStr)
+
+	imgID = strings.SplitAfter(r.URL.Path, "images/")
+	if len(imgID) < 2 {
+		return nil
+	}
+
+	cmdStr = "rkt image rm " + imgID[1]
+
+	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
 	return err
 }
