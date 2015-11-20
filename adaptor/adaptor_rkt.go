@@ -66,6 +66,11 @@ func Rkt_Rundockercmd(r *http.Request, method int) error {
 		return rktCmdFetch(r)
 	}
 
+	enterMatch, _ := regexp.MatchString(".*/containers/.*/json", r.URL.Path)
+	if enterMatch {
+		return rktCmdEnter(r)
+	}
+
 	return nil
 }
 
@@ -262,6 +267,36 @@ func rktCmdFetch(r *http.Request) error {
 	logrus.Debugf("The image for rkt is : %s", imgStr)
 
 	cmdStr = "rkt fetch --insecure-skip-verify " + imgStr
+
+	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
+
+	return err
+}
+
+func rktCmdEnter(r *http.Request) error {
+	var cmdStr string
+	var rktID []string
+
+	requestBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logrus.Errorf("Read request body error: %s", err)
+		return err
+	}
+
+	cmdStr = strings.TrimRight(string(requestBody), "\n")
+	logrus.Debugf("Transforwarding request body: %s", cmdStr)
+
+	rktID = strings.SplitAfter(r.URL.Path, "containers/")
+	if len(rktID) < 2 {
+		return nil
+	}
+
+	rktID = strings.Split(rktID[1], "/json")
+	if len(rktID) < 1 {
+		return nil
+	}
+
+	cmdStr = "rkt enter " + rktID[0] + " /bin/sh"
 
 	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
