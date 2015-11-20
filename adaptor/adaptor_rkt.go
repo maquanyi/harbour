@@ -61,6 +61,11 @@ func Rkt_Rundockercmd(r *http.Request, method int) error {
 		return rktCmdStats(r)
 	}
 
+	fetchMatch, _ := regexp.MatchString("/images/create", r.URL.Path)
+	if fetchMatch {
+		return rktCmdFetch(r)
+	}
+
 	return nil
 }
 
@@ -220,6 +225,43 @@ func rktCmdStats(r *http.Request) error {
 	}
 
 	cmdStr = "rkt status " + rktID[0]
+
+	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
+
+	return err
+}
+
+func rktCmdFetch(r *http.Request) error {
+	var cmdStr string
+	var imgID []string
+	var imgStr string
+
+	requestBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logrus.Errorf("Read request body error: %s", err)
+		return err
+	}
+
+	cmdStr = strings.TrimRight(string(requestBody), "\n")
+	logrus.Debugf("Transforwarding request body: %s", cmdStr)
+
+	url := r.URL.Query()
+	imgID = url["fromImage"]
+
+	if len(imgID) < 1 {
+		return nil
+	} else {
+		imgStr = imgID[0]
+	}
+
+	urlMatch, _ := regexp.MatchString("coreos.com", imgStr)
+	if !urlMatch {
+		imgStr = "docker://" + imgStr
+	}
+
+	logrus.Debugf("The image for rkt is : %s", imgStr)
+
+	cmdStr = "rkt fetch --insecure-skip-verify " + imgStr
 
 	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
