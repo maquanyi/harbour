@@ -109,9 +109,16 @@ ubuntu              latest              a5a467fddcb8        2 weeks ago         
 #### Proxy for rkt
 If you want harbour to work as a proxy for rkt, `--container-runtime=rkt` option can be added when harbour daemon started. Example illustrated as below:
 
-- Run harbour daemon with rkt parameter
+- Install rkt
+```bash
+wget https://github.com/coreos/rkt/releases/download/v0.11.0/rkt-v0.11.0.tar.gz
+tar xzvf rkt-v0.11.0.tar.gz
+cd rkt-v0.11.0
+cp * /usr/local/bin
+```
 
-Harbour will be working in rkt proxy mode:
+- Run harbour daemon in rkt proxy mode
+
 ```
 $ ./harbour --container-runtime=rkt -d -D &
 [3] 25594
@@ -123,10 +130,21 @@ DEBU[0000] Listening for HTTP on unix (/var/run/docker.sock)
 DEBU[0000] docker group found. gid: 999
 
 ```
+- Run docker daemon with parameters
+```
+$ docker -d -H unix:///var/run/docker-real.sock &
+[2] 15131
 
+INFO[0000] Listening for HTTP on unix (/var/run/docker-real.sock)
+INFO[0000] [graphdriver] using prior storage driver "aufs"
+INFO[0000] Loading containers: start.
+....................
+INFO[0000] Loading containers: done.
+INFO[0000] Daemon has completed initialization
+INFO[0000] Docker daemon                                 commit=786b29d execdriver=native-0.2 graphdriver=aufs version=1.7.1
+```
 - Handle user requests by using Docker cmd
 
-Docker cmd will be converted to rkt operations:
 ```
 $ docker run busybox
 DEBU[1397] Calling POST
