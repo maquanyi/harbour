@@ -180,6 +180,7 @@ sha512-13885d66415514cdf908a033a7d2025c9cdf5fed2336fa7ea2e8821e440de9cb example:
 sha512-e3369b474208cd5d8aa40d04a6c609d5feace3c56501cbabed2b847db93941ef example:0.0.1                   2015-09-16 14:38:35.04 +0800 CST        false
 
 ```
+Now you can operate rkt containers just by using docker client, enjoy it:-)
 
 ## How to involve
 If any issues are encountered while using the harbour project, several avenues are available for support:
