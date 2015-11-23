@@ -36,44 +36,58 @@ func Rkt_Rundockercmd(r *http.Request, method int) error {
 		}
 	}
 
-	createMatch, _ := regexp.MatchString("/containers/create", r.URL.Path)
-	if createMatch {
+	// docker run --> rkt run
+	runMatch, _ := regexp.MatchString("/containers/create", r.URL.Path)
+	if runMatch {
 		return rktCmdRun(r)
 	}
 
+	// docker ps --> rkt list
 	listMatch, _ := regexp.MatchString("/containers/json", r.URL.Path)
 	if listMatch {
 		return rktCmdList(r)
 	}
 
+	// docker images --> rkt image list
 	imageMatch, _ := regexp.MatchString("/images/json", r.URL.Path)
 	if imageMatch {
 		return rktCmdImage(r)
 	}
 
+	// docker version --> rkt version
 	versionMatch, _ := regexp.MatchString("/version", r.URL.Path)
 	if versionMatch {
 		return rktCmdVersion(r)
 	}
 
+	// docker stats --> rkt status
 	statsMatch, _ := regexp.MatchString("/stats", r.URL.Path)
 	if statsMatch {
 		return rktCmdStats(r)
 	}
 
+	// docker pull --> rkt fetch
 	fetchMatch, _ := regexp.MatchString("/images/create", r.URL.Path)
 	if fetchMatch {
 		return rktCmdFetch(r)
 	}
 
+	// docker attach --> rkt enter
 	enterMatch, _ := regexp.MatchString(".*/containers/.*/json", r.URL.Path)
 	if enterMatch {
 		return rktCmdEnter(r)
 	}
 
+	// docker save --> rkt export
 	exportMatch, _ := regexp.MatchString(".*/images/.*/get", r.URL.Path)
 	if exportMatch {
 		return rktCmdExport(r)
+	}
+
+	// docker inspect --> rkt image cat-manifest
+	manifestMatch, _ := regexp.MatchString(".*/images/.*/json", r.URL.Path)
+	if manifestMatch {
+		return rktCmdCatmanifest(r)
 	}
 
 	return nil
@@ -332,6 +346,36 @@ func rktCmdExport(r *http.Request) error {
 	}
 
 	cmdStr = "rkt image export " + rktID[0] + " " + strings.TrimRight(string(rktID[0]), " ") + ".aci"
+
+	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
+
+	return err
+}
+
+func rktCmdCatmanifest(r *http.Request) error {
+	var cmdStr string
+	var rktID []string
+
+	requestBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logrus.Errorf("Read request body error: %s", err)
+		return err
+	}
+
+	cmdStr = strings.TrimRight(string(requestBody), "\n")
+	logrus.Debugf("Transforwarding request body: %s", cmdStr)
+
+	rktID = strings.SplitAfter(r.URL.Path, "images/")
+	if len(rktID) < 2 {
+		return nil
+	}
+
+	rktID = strings.Split(rktID[1], "/json")
+	if len(rktID) < 1 {
+		return nil
+	}
+
+	cmdStr = "rkt image cat-manifest " + rktID[0]
 
 	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
