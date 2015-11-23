@@ -152,11 +152,11 @@ func rktCmdList(r *http.Request) error {
 	cmdStr = strings.TrimRight(string(requestBody), "\n")
 	logrus.Debugf("Transforwarding request body: %s", cmdStr)
 
-	cmdStr = "list"
+	cmdStr = "rkt list"
 
 	logrus.Debugf("The operation for rkt is : %s", cmdStr)
 
-	err = utils.Run(exec.Command("rkt", cmdStr))
+	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
 	return err
 }
@@ -173,11 +173,11 @@ func rktCmdImage(r *http.Request) error {
 	cmdStr = strings.TrimRight(string(requestBody), "\n")
 	logrus.Debugf("Transforwarding request body: %s", cmdStr)
 
-	cmdStr = "list"
+	cmdStr = "rkt image list"
 
 	logrus.Debugf("The operation for rkt is : %s", cmdStr)
 
-	err = utils.Run(exec.Command("rkt", "image", cmdStr))
+	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
 	return err
 }
@@ -194,11 +194,11 @@ func rktCmdVersion(r *http.Request) error {
 	cmdStr = strings.TrimRight(string(requestBody), "\n")
 	logrus.Debugf("Transforwarding request body: %s", cmdStr)
 
-	cmdStr = "version"
+	cmdStr = "rkt version"
 
 	logrus.Debugf("The operation for rkt is : %s", cmdStr)
 
-	err = utils.Run(exec.Command("rkt", cmdStr))
+	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
 	return err
 }
@@ -252,7 +252,11 @@ func rktCmdRmi(r *http.Request) error {
 		return nil
 	}
 
-	cmdStr = "rkt image rm " + imgID[1]
+	if imgID[1] == "all" {
+		cmdStr = "rkt image gc"
+	} else {
+		cmdStr = "rkt image rm " + imgID[1]
+	}
 
 	logrus.Debugf("The operation for rkt is : %s", cmdStr)
 
