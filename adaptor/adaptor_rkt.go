@@ -24,23 +24,24 @@ type UserConfig struct {
 }
 
 func Rkt_Rundockercmd(r *http.Request, method int) error {
+	var err error
 
-	if method == DELETE {
-		rmMatch, _ := regexp.MatchString("/containers/", r.URL.Path)
-		if rmMatch {
-			return rktCmdRm(r)
-		}
-		rmiMatch, _ := regexp.MatchString("/images/", r.URL.Path)
-		if rmiMatch {
-			return rktCmdRmi(r)
-		}
+	switch method {
+	case GET:
+		err = rkt_DockerGet(r)
+	case POST:
+		err = rkt_DockerPost(r)
+	case DELETE:
+		err = rkt_DockerDelete(r)
+	default:
+		logrus.Debugf("Unknown http method.")
+		err = nil
 	}
 
-	// docker run --> rkt run
-	runMatch, _ := regexp.MatchString("/containers/create", r.URL.Path)
-	if runMatch {
-		return rktCmdRun(r)
-	}
+	return err
+}
+
+func rkt_DockerGet(r *http.Request) error {
 
 	// docker ps --> rkt list
 	listMatch, _ := regexp.MatchString("/containers/json", r.URL.Path)
@@ -66,12 +67,6 @@ func Rkt_Rundockercmd(r *http.Request, method int) error {
 		return rktCmdStats(r)
 	}
 
-	// docker pull --> rkt fetch
-	fetchMatch, _ := regexp.MatchString("/images/create", r.URL.Path)
-	if fetchMatch {
-		return rktCmdFetch(r)
-	}
-
 	// docker attach --> rkt enter
 	enterMatch, _ := regexp.MatchString(".*/containers/.*/json", r.URL.Path)
 	if enterMatch {
@@ -93,6 +88,35 @@ func Rkt_Rundockercmd(r *http.Request, method int) error {
 	return nil
 }
 
+func rkt_DockerPost(r *http.Request) error {
+	// docker run --> rkt run
+	runMatch, _ := regexp.MatchString("/containers/create", r.URL.Path)
+	if runMatch {
+		return rktCmdRun(r)
+	}
+
+	// docker pull --> rkt fetch
+	fetchMatch, _ := regexp.MatchString("/images/create", r.URL.Path)
+	if fetchMatch {
+		return rktCmdFetch(r)
+	}
+
+	return nil
+}
+
+func rkt_DockerDelete(r *http.Request) error {
+	rmMatch, _ := regexp.MatchString("/containers/", r.URL.Path)
+	if rmMatch {
+		return rktCmdRm(r)
+	}
+	rmiMatch, _ := regexp.MatchString("/images/", r.URL.Path)
+	if rmiMatch {
+		return rktCmdRmi(r)
+	}
+
+	return nil
+}
+
 func rktCmdRun(r *http.Request) error {
 	var cmdStr string
 	var config UserConfig
@@ -108,6 +132,8 @@ func rktCmdRun(r *http.Request) error {
 	json.Unmarshal([]byte(cmdStr), &config)
 	cmdStr = "rkt " + "--interactive " + "--insecure-skip-verify " + "--mds-register=false " + "run "
 	cmdStr += "docker://" + config.Image
+
+	logrus.Debugf("The operation for rkt is : %s", cmdStr)
 
 	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
@@ -128,6 +154,8 @@ func rktCmdList(r *http.Request) error {
 
 	cmdStr = "list"
 
+	logrus.Debugf("The operation for rkt is : %s", cmdStr)
+
 	err = utils.Run(exec.Command("rkt", cmdStr))
 
 	return err
@@ -147,6 +175,8 @@ func rktCmdImage(r *http.Request) error {
 
 	cmdStr = "list"
 
+	logrus.Debugf("The operation for rkt is : %s", cmdStr)
+
 	err = utils.Run(exec.Command("rkt", "image", cmdStr))
 
 	return err
@@ -165,6 +195,8 @@ func rktCmdVersion(r *http.Request) error {
 	logrus.Debugf("Transforwarding request body: %s", cmdStr)
 
 	cmdStr = "version"
+
+	logrus.Debugf("The operation for rkt is : %s", cmdStr)
 
 	err = utils.Run(exec.Command("rkt", cmdStr))
 
@@ -195,6 +227,8 @@ func rktCmdRm(r *http.Request) error {
 		cmdStr = "rkt rm --insecure-skip-verify " + rktID[1]
 	}
 
+	logrus.Debugf("The operation for rkt is : %s", cmdStr)
+
 	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
 	return err
@@ -219,6 +253,8 @@ func rktCmdRmi(r *http.Request) error {
 	}
 
 	cmdStr = "rkt image rm " + imgID[1]
+
+	logrus.Debugf("The operation for rkt is : %s", cmdStr)
 
 	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
@@ -249,6 +285,8 @@ func rktCmdStats(r *http.Request) error {
 	}
 
 	cmdStr = "rkt status " + rktID[0]
+
+	logrus.Debugf("The operation for rkt is : %s", cmdStr)
 
 	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
@@ -287,6 +325,8 @@ func rktCmdFetch(r *http.Request) error {
 
 	cmdStr = "rkt fetch --insecure-skip-verify " + imgStr
 
+	logrus.Debugf("The operation for rkt is : %s", cmdStr)
+
 	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
 	return err
@@ -316,6 +356,8 @@ func rktCmdEnter(r *http.Request) error {
 	}
 
 	cmdStr = "rkt enter " + rktID[0] + " /bin/sh"
+
+	logrus.Debugf("The operation for rkt is : %s", cmdStr)
 
 	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
@@ -347,6 +389,8 @@ func rktCmdExport(r *http.Request) error {
 
 	cmdStr = "rkt image export " + rktID[0] + " " + strings.TrimRight(string(rktID[0]), " ") + ".aci"
 
+	logrus.Debugf("The operation for rkt is : %s", cmdStr)
+
 	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
 	return err
@@ -376,6 +420,8 @@ func rktCmdCatmanifest(r *http.Request) error {
 	}
 
 	cmdStr = "rkt image cat-manifest " + rktID[0]
+
+	logrus.Debugf("The operation for rkt is : %s", cmdStr)
 
 	err = utils.Run(exec.Command("/bin/sh", "-c", cmdStr))
 
