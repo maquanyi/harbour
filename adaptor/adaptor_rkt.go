@@ -71,7 +71,7 @@ func Rkt_Rundockercmd(r *http.Request, method int) error {
 		return rktCmdEnter(r)
 	}
 
-	exportMatch, _ := regexp.MatchString(".*/containers/.*/export", r.URL.Path)
+	exportMatch, _ := regexp.MatchString(".*/images/.*/get", r.URL.Path)
 	if exportMatch {
 		return rktCmdExport(r)
 	}
@@ -321,12 +321,12 @@ func rktCmdExport(r *http.Request) error {
 	cmdStr = strings.TrimRight(string(requestBody), "\n")
 	logrus.Debugf("Transforwarding request body: %s", cmdStr)
 
-	rktID = strings.SplitAfter(r.URL.Path, "containers/")
+	rktID = strings.SplitAfter(r.URL.Path, "images/")
 	if len(rktID) < 2 {
 		return nil
 	}
 
-	rktID = strings.Split(rktID[1], "/export")
+	rktID = strings.Split(rktID[1], "/get")
 	if len(rktID) < 1 {
 		return nil
 	}
