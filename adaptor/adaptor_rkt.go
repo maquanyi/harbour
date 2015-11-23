@@ -130,8 +130,15 @@ func rktCmdRun(r *http.Request) error {
 	cmdStr = strings.TrimRight(string(requestBody), "\n")
 	logrus.Debugf("Transforwarding request body: %s", cmdStr)
 	json.Unmarshal([]byte(cmdStr), &config)
+
 	cmdStr = "rkt " + "--interactive " + "--insecure-skip-verify " + "--mds-register=false " + "run "
-	cmdStr += "docker://" + config.Image
+
+	imgMatch, _ := regexp.MatchString("coreos.com", config.Image)
+	if !imgMatch {
+		cmdStr += "docker://" + config.Image
+	} else {
+		cmdStr += config.Image
+	}
 
 	logrus.Debugf("The operation for rkt is : %s", cmdStr)
 
