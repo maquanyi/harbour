@@ -14,7 +14,8 @@ There is no doubt that container technology is becoming more and more popular. I
 At the time of writing, harbour can work as a proxy for docker and rkt, user can operate containers just by using docker client(harbour client will be provided in the future), without concern for differences in backend container engine. Support for other containers(e.g. OCI) is already under way. It's a work in progress, so bear with us:)
 
 ## Demo
-Prior to embark on a journey of harbour, we recommend you take a look at the video below:
+Prior to embark on a journey of harbour, we recommend you take a look at the video below, which demonstrated how to use harbour as a rkt proxy.
+
 [![Harbour Demo](http://img.youtube.com/vi/rlJ_jVekIc4/0.jpg)](http://www.youtube.com/watch?v=rlJ_jVekIc4 "Harbour Demo")
 
 ## Try it out
