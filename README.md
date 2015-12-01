@@ -43,7 +43,7 @@ make
 sudo make install
 ```
 	
-## Usage
+### Usage
 
 ```
 $  ./harbour
@@ -65,7 +65,7 @@ Commands:
 Run 'harbour COMMAND --help' for more information on a command.
 
 ```
-### Default mode
+#### Default mode
 Make sure docker located in `PATH`, run docker daemon, and do the following work:
 - If binary used, run docker daemon with `-H unix:///var/run/docker-real.sock`
 - If ubuntu lxc-docker used, open file `/etc/default/docker`, add `-H unix:///var/run/docker-real.sock` in `DOCKER_OPTS`, save and restart docker.
@@ -73,7 +73,7 @@ Make sure docker located in `PATH`, run docker daemon, and do the following work
 
 Then run `harbour -d D` using root(Listen to `/var/run/docker.sock` and forward it to `/var/run/docker-real.sock` by default)
 
-### User-defined mode
+#### User-defined mode
 `harbour -d -D --docker-sock=/var/run/dockerxxx.sock`(specified sock for docker) `-H unix:///a/b/c.sock`(specified sock for harbour)  `-H tcp://:4567`(specified tcp port for harbour)
 
 ### Examples
