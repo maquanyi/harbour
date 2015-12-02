@@ -7,4 +7,4 @@ all:
 install:
 		cp harbour /usr/local/bin/harbour
 clean:
-		rm harbour
+		go clean
